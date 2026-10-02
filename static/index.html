@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JobTrack & ATS Matcher | Intelligent Career Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: rgba(22, 30, 49, 0.7);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-light: rgba(99, 102, 241, 0.15);
+      --accent: #06b6d4;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(79, 70, 229, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.12) 0px, transparent 50%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 1.25rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--card-border);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(11, 15, 25, 0.85);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-title span {
+      color: var(--accent);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .btn-outline {
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text);
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .tabs-nav {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin: 2rem auto 1.5rem;
+      background: rgba(22, 30, 49, 0.6);
+      padding: 0.4rem;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      width: fit-content;
+    }
+
+    .tab-btn {
+      padding: 0.6rem 1.5rem;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+    }
+
+    main {
+      flex: 1;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 1.5rem 3rem;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Grid Layouts */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 860px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.75rem;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    }
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+      color: var(--text-muted);
+    }
+
+    textarea, input, select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      background: rgba(11, 15, 25, 0.7);
+      border: 1px solid var(--card-border);
+      color: #fff;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    textarea:focus, input:focus, select:focus {
+      border-color: var(--primary);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 180px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #6366f1);
+      color: #fff;
+      border: none;
+      padding: 0.85rem 1.75rem;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      box-shadow: 0 4px 18px rgba(79, 70, 229, 0.4);
+      transition: all 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, var(--primary-hover), var(--primary));
+      transform: translateY(-1px);
+    }
+
+    .btn-sm {
+      padding: 0.35rem 0.75rem;
+      font-size: 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    /* Match Results */
+    .match-score-card {
+      margin-top: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      padding: 1.5rem;
+      border-radius: 12px;
+      background: rgba(11, 15, 25, 0.8);
+      border: 1px solid var(--card-border);
+    }
+
+    .score-circle {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      font-weight: 800;
+      border: 4px solid var(--accent);
+      color: #fff;
+      flex-shrink: 0;
+      box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+    }
+
+    .score-circle span {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .tag-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .tag {
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .tag-success {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+    }
+
+    .tag-missing {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+    }
+
+    /* Table styles */
+    .table-container {
+      overflow-x: auto;
+      margin-top: 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    th {
+      padding: 0.85rem 1rem;
+      background: rgba(11, 15, 25, 0.6);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .badge-status {
+      padding: 0.3rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: inline-block;
+    }
+
+    .status-Applied { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .status-Screening { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .status-Interview { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+    .status-Offered { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .status-Rejected { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .stat-num {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="brand-logo">JT</div>
+      <div class="brand-title">JobTrack <span>AI</span></div>
+    </div>
+    <div class="nav-actions">
+      <a href="/docs" target="_blank" class="btn-outline">Swagger API Docs ↗</a>
+    </div>
+  </header>
+
+  <div class="tabs-nav">
+    <button class="tab-btn active" onclick="switchTab('matcher')">⚡ ATS Resume Matcher</button>
+    <button class="tab-btn" onclick="switchTab('tracker')">📋 Application Tracker</button>
+    <button class="tab-btn" onclick="switchTab('analytics')">📊 Analytics</button>
+  </div>
+
+  <main>
+    <!-- TAB 1: RESUME MATCHER -->
+    <div id="tab-matcher" class="tab-content active">
+      <div class="grid-2">
+        <!-- Input Form -->
+        <div class="card">
+          <div class="card-title">
+            <span>1. Resume & Job Input</span>
+            <button class="btn-outline btn-sm" onclick="loadSampleData()">Load Sample Data</button>
+          </div>
+          <p class="card-desc">Compare your resume against any Job Description using NLP vectorization.</p>
+          
+          <div style="margin-bottom: 1rem;">
+            <label for="resume-input">Resume Content (Plain Text)</label>
+            <textarea id="resume-input" placeholder="Paste your resume content here..."></textarea>
+          </div>
+
+          <div style="margin-bottom: 1.25rem;">
+            <label for="jd-input">Target Job Description (JD)</label>
+            <textarea id="jd-input" placeholder="Paste the job description requirements and skills here..."></textarea>
+          </div>
+
+          <button class="btn-primary" onclick="runAnalysis()" id="analyze-btn">
+            <span>Analyze Match & Gap Analysis</span>
+          </button>
+        </div>
+
+        <!-- Output Analysis -->
+        <div class="card" id="results-card">
+          <div class="card-title">2. ATS Match Diagnostics</div>
+          <p class="card-desc">Calculated via Scikit-Learn TF-IDF vectorization and Cosine Similarity.</p>
+          
+          <div id="no-analysis" style="text-align: center; padding: 3rem 1rem; color: var(--text-muted);">
+            Click <strong>"Analyze Match"</strong> to see match percentage and keyword gaps.
+          </div>
+
+          <div id="analysis-output" style="display: none;">
+            <div class="match-score-card">
+              <div class="score-circle" id="score-display">0%<span>Match</span></div>
+              <div>
+                <h3 id="verdict-title" style="margin-bottom: 0.25rem;">Match Score</h3>
+                <p id="verdict-desc" style="font-size: 0.85rem; color: var(--text-muted);"></p>
+                <div style="margin-top: 0.75rem;">
+                  <button class="btn-outline btn-sm" onclick="saveToTrackerPrompt()">+ Save to Job Tracker</button>
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top: 1.25rem;">
+              <label>Matched Technical Keywords:</label>
+              <div class="tag-container" id="matched-tags"></div>
+            </div>
+
+            <div style="margin-top: 1.25rem;">
+              <label>Missing Keywords in Resume:</label>
+              <div class="tag-container" id="missing-tags"></div>
+            </div>
+
+            <div style="margin-top: 1.25rem;">
+              <label>ATS Recommendations:</label>
+              <ul id="recommendations-list" style="font-size: 0.85rem; color: var(--text-muted); padding-left: 1.2rem; margin-top: 0.4rem; line-height: 1.5;"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: APPLICATION TRACKER -->
+    <div id="tab-tracker" class="tab-content">
+      <div class="grid-2" style="margin-bottom: 1.5rem;">
+        <div class="card">
+          <div class="card-title">Add New Job Application</div>
+          <p class="card-desc">Stored in a structured SQLite database with CRUD operations.</p>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
+            <div>
+              <label>Company Name</label>
+              <input type="text" id="job-company" placeholder="e.g. Google, Bosch, Infosys">
+            </div>
+            <div>
+              <label>Job Role</label>
+              <input type="text" id="job-role" placeholder="e.g. Python Developer Intern">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
+            <div>
+              <label>Location</label>
+              <input type="text" id="job-location" placeholder="e.g. Bengaluru, Remote" value="Bengaluru">
+            </div>
+            <div>
+              <label>Status</label>
+              <select id="job-status">
+                <option value="Applied">Applied</option>
+                <option value="Screening">Screening</option>
+                <option value="Interview">Interview</option>
+                <option value="Offered">Offered</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+            </div>
+            <div>
+              <label>Match Score (%)</label>
+              <input type="number" id="job-score" placeholder="85" value="0">
+            </div>
+          </div>
+
+          <div style="margin-bottom: 1rem;">
+            <label>Notes / Follow-up</label>
+            <input type="text" id="job-notes" placeholder="e.g. Applied via LinkedIn, HR referral">
+          </div>
+
+          <button class="btn-primary" onclick="submitNewJob()">Save Application</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Filter & Overview</div>
+          <p class="card-desc">Filter active applications by status stage.</p>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button class="btn-outline btn-sm" onclick="filterJobs('All')">All</button>
+            <button class="btn-outline btn-sm" onclick="filterJobs('Applied')">Applied</button>
+            <button class="btn-outline btn-sm" onclick="filterJobs('Screening')">Screening</button>
+            <button class="btn-outline btn-sm" onclick="filterJobs('Interview')">Interview</button>
+            <button class="btn-outline btn-sm" onclick="filterJobs('Offered')">Offered</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Tracked Applications</div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Company</th>
+                <th>Role</th>
+                <th>Location</th>
+                <th>Date</th>
+                <th>Match Score</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="jobs-tbody">
+              <tr><td colspan="8" style="text-align: center; color: var(--text-muted);">Loading applications...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: ANALYTICS -->
+    <div id="tab-analytics" class="tab-content">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Applications</div>
+          <div class="stat-num" id="stat-total">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Average Match Score</div>
+          <div class="stat-num" id="stat-avg-score">0%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Active Interviews</div>
+          <div class="stat-num" id="stat-interviews">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Offers Received</div>
+          <div class="stat-num" id="stat-offers">0</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">System Architecture Overview</div>
+        <p class="card-desc" style="line-height: 1.6;">
+          This system is built using a decoupled architecture with a <strong>FastAPI REST backend</strong> and an <strong>SQLite relational database</strong>.<br>
+          The matching service executes text preprocessing, token normalization, and <strong>TF-IDF vectorization</strong> paired with <strong>Cosine Similarity</strong> from Scikit-Learn to evaluate candidate alignment against corporate job requirements in real-time.
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    let currentMatchResults = null;
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      
+      event.target.classList.add('active');
+      document.getElementById('tab-' + tabId).classList.add('active');
+
+      if (tabId === 'tracker' || tabId === 'analytics') {
+        loadJobs();
+        loadStats();
+      }
+    }
+
+    function loadSampleData() {
+      document.getElementById('resume-input').value = `Prateek H Kumbar | Bengaluru
+Electronics & Telecommunication Engineering student skilled in Python, SQL, C++, Embedded C.
+Hands-on experience with FastAPI, SQLite relational database design, data analysis with Pandas & NumPy.
+Built IoT telemetry data pipelines and crash detection algorithms.
+Familiar with Git, GitHub, REST APIs, Object-Oriented Programming (OOP), and unit testing.`;
+
+      document.getElementById('jd-input').value = `Job Title: Junior Python & Software Engineering Intern
+Requirements:
+- Strong proficiency in Python, C++, and SQL
+- Familiarity with REST APIs, FastAPI or Flask, and relational databases (SQLite / PostgreSQL)
+- Experience with data analysis libraries such as Pandas and NumPy
+- Good understanding of Data Structures, Algorithms, OOP, and Git
+- Familiarity with Docker, Linux, and Cloud (AWS/GCP) is a plus`;
+    }
+
+    async function runAnalysis() {
+      const resume = document.getElementById('resume-input').value.trim();
+      const jd = document.getElementById('jd-input').value.trim();
+
+      if (!resume || !jd) {
+        alert("Please provide both Resume text and Job Description!");
+        return;
+      }
+
+      const btn = document.getElementById('analyze-btn');
+      btn.innerText = "Analyzing with Scikit-Learn NLP...";
+
+      try {
+        const response = await fetch('/api/match', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ resume_text: resume, job_description: jd })
+        });
+        const data = await response.json();
+        currentMatchResults = data;
+
+        document.getElementById('no-analysis').style.display = 'none';
+        document.getElementById('analysis-output').style.display = 'block';
+
+        const score = data.match_percentage;
+        document.getElementById('score-display').innerHTML = `${score}%<span>Match</span>`;
+        document.getElementById('verdict-desc').innerText = `Cosine Similarity: ${data.cosine_similarity}% | Total JD Keywords: ${data.total_jd_keywords}`;
+
+        // Matched Tags
+        const matchedContainer = document.getElementById('matched-tags');
+        matchedContainer.innerHTML = data.matched_keywords.length > 0 
+          ? data.matched_keywords.map(k => `<span class="tag tag-success">✓ ${k}</span>`).join('')
+          : '<span style="color:var(--text-muted); font-size:0.8rem;">No exact tech keywords matched</span>';
+
+        // Missing Tags
+        const missingContainer = document.getElementById('missing-tags');
+        missingContainer.innerHTML = data.missing_keywords.length > 0
+          ? data.missing_keywords.map(k => `<span class="tag tag-missing">✕ ${k}</span>`).join('')
+          : '<span style="color:var(--text-muted); font-size:0.8rem;">None! Perfect keyword coverage.</span>';
+
+        // Recommendations
+        const recList = document.getElementById('recommendations-list');
+        recList.innerHTML = data.recommendations.map(r => `<li>${r}</li>`).join('');
+
+      } catch (err) {
+        alert("Error connecting to backend API: " + err);
+      } finally {
+        btn.innerText = "Analyze Match & Gap Analysis";
+      }
+    }
+
+    function saveToTrackerPrompt() {
+      const company = prompt("Enter Company Name (e.g. Bosch):", "Tech Corp");
+      if (!company) return;
+      const role = prompt("Enter Role:", "Python Developer Intern");
+      if (!role) return;
+
+      const score = currentMatchResults ? currentMatchResults.match_percentage : 0;
+      fetch('/api/jobs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          company: company,
+          role: role,
+          location: "Bengaluru",
+          status: "Applied",
+          match_score: score,
+          job_description: "",
+          notes: "Analyzed with ATS Matcher"
+        })
+      }).then(() => {
+        alert("Saved to Tracker!");
+        loadJobs();
+      });
+    }
+
+    async function loadJobs(status = null) {
+      const url = status && status !== 'All' ? `/api/jobs?status=${status}` : '/api/jobs';
+      const res = await fetch(url);
+      const jobs = await res.json();
+      const tbody = document.getElementById('jobs-tbody');
+
+      if (jobs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:var(--text-muted);">No applications found. Add one above!</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = jobs.map(j => `
+        <tr>
+          <td>#${j.id}</td>
+          <td><strong>${j.company}</strong></td>
+          <td>${j.role}</td>
+          <td>${j.location}</td>
+          <td>${j.applied_date}</td>
+          <td><span style="font-weight:700; color:var(--accent);">${j.match_score}%</span></td>
+          <td>
+            <select onchange="updateJobStatus(${j.id}, this.value)" style="padding:0.25rem 0.5rem; font-size:0.75rem; width:auto;">
+              <option value="Applied" ${j.status==='Applied'?'selected':''}>Applied</option>
+              <option value="Screening" ${j.status==='Screening'?'selected':''}>Screening</option>
+              <option value="Interview" ${j.status==='Interview'?'selected':''}>Interview</option>
+              <option value="Offered" ${j.status==='Offered'?'selected':''}>Offered</option>
+              <option value="Rejected" ${j.status==='Rejected'?'selected':''}>Rejected</option>
+            </select>
+          </td>
+          <td>
+            <button onclick="deleteJob(${j.id})" class="btn-outline btn-sm" style="color:var(--danger); border-color:rgba(239,68,68,0.3);">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function submitNewJob() {
+      const company = document.getElementById('job-company').value.trim();
+      const role = document.getElementById('job-role').value.trim();
+      const location = document.getElementById('job-location').value.trim();
+      const status = document.getElementById('job-status').value;
+      const score = parseFloat(document.getElementById('job-score').value) || 0;
+      const notes = document.getElementById('job-notes').value.trim();
+
+      if (!company || !role) {
+        alert("Please enter both Company and Role!");
+        return;
+      }
+
+      await fetch('/api/jobs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ company, role, location, status, match_score: score, notes })
+      });
+
+      document.getElementById('job-company').value = '';
+      document.getElementById('job-role').value = '';
+      document.getElementById('job-notes').value = '';
+      loadJobs();
+      loadStats();
+    }
+
+    async function updateJobStatus(id, newStatus) {
+      await fetch(`/api/jobs/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+      loadStats();
+    }
+
+    async function deleteJob(id) {
+      if (confirm("Delete this application?")) {
+        await fetch(`/api/jobs/${id}`, { method: 'DELETE' });
+        loadJobs();
+        loadStats();
+      }
+    }
+
+    function filterJobs(status) {
+      loadJobs(status);
+    }
+
+    async function loadStats() {
+      const res = await fetch('/api/stats');
+      const data = await res.json();
+      document.getElementById('stat-total').innerText = data.total_applied;
+      document.getElementById('stat-avg-score').innerText = data.average_match_score + '%';
+      
+      const counts = data.status_distribution || {};
+      document.getElementById('stat-interviews').innerText = counts['Interview'] || 0;
+      document.getElementById('stat-offers').innerText = counts['Offered'] || 0;
+    }
+
+    // Initial load
+    loadJobs();
+    loadStats();
+  </script>
+</body>
+</html>
