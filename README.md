@@ -40,6 +40,10 @@ A high-performance RESTful microservice built with **FastAPI** and **SQLite** de
 | `GET` | `/api/stats` | Retrieve aggregate database metrics and application pipeline statistics. |
 
 ---
+### 📂 Project Documentation
+
+Full technical implementation details, circuit diagrams, flowcharts, and test results are documented in the project report:
+- 📄 **[View Full Project Report PDF](./Job_Matcher.pdf)**
 
 ## 📂 Project Structure
 
